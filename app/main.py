@@ -2,9 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
-from motor.motor_asyncio import AsyncIOMotorClient  # Import the async MongoDB client
+from motor.motor_asyncio import AsyncIOMotorClient
 from app.routes.item import router as item_router
-from app.routes.clock_in import router as clock_in_router  # Ensure this import exists
+from app.routes.clock_in import router as clock_in_router  # Import the clock-in router
 
 # Load environment variables from .env file
 load_dotenv()
@@ -14,20 +14,20 @@ app = FastAPI()
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust this to restrict origins in production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # MongoDB Connection Setup
-client = None  # Define client globally
-database = None  # Define database globally
+client = None
+database = None
 
 @app.on_event("startup")
 async def startup_event():
-    global client, database  # Use global variables to access them later
-    mongodb_uri = os.getenv("MONGODB_URI")  # Get the URI from environment variables
+    global client, database
+    mongodb_uri = os.getenv("MONGODB_URI")
     if mongodb_uri:
         client = AsyncIOMotorClient(mongodb_uri)  # Initialize the MongoDB client
         database = client['FastAPI-Assignment']  # Set the database name to FastAPI-Assignment
