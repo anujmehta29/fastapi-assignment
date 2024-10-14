@@ -37,17 +37,14 @@ def insert_item(item_data: dict) -> dict:
     print(f"Inserted Item: {item_data}")  # Debugging print
     return item_data  # Return the inserted item with the new id
 
-# Find a single item by its ID
-def find_item(item_id: str) -> Optional[Item]:
-    if not ObjectId.is_valid(item_id):
-        return None
-
-    # Find the item by ObjectId
+def find_item(item_id: str):
     item = item_collection.find_one({"_id": ObjectId(item_id)})
     if item:
-        item['id'] = str(item.pop('_id'))  # Convert ObjectId to string and assign to 'id'
-        return Item(**item)  # Return as an Item Pydantic model
-    return None
+        item['id'] = str(item['_id'])  # Convert ObjectId to string and assign to id
+        item.pop('_id')  # Optionally remove the original _id if you don't want it in the response
+    return item
+
+
 
 # Find all items in the collection
 def find_all_items() -> List[Item]:

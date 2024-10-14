@@ -43,20 +43,22 @@ async def read_all_items():
         print(f"Error retrieving items: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+
 @router.get("/items/{item_id}", response_model=Item)
-async def read_item(item_id: str):
+def read_item(item_id: str):  # Keep it synchronous
     # Validate ObjectId
     if not ObjectId.is_valid(item_id):
         raise HTTPException(status_code=400, detail="Invalid item ID format")
 
     # Find the item by its ID
-    item = find_item(item_id)
+    item = find_item(item_id)  # This should now return a dictionary
 
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
 
     # Return the found item using the Item model
-    return Item(**item)
+    return Item(**item)  # This should work if item is a dictionary
 
 @router.put("/items/{item_id}", response_model=Item)
 async def update_item(item_id: str, item_data: Item):
