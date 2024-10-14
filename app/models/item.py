@@ -3,68 +3,78 @@ from datetime import datetime
 from pymongo.collection import Collection
 from ..database import db  # Ensure this correctly imports your database connection
 from bson import ObjectId
+from typing import Optional, List
 
 # Define the item collection
 item_collection: Collection = db['items']
 
-
-class ItemModel(BaseModel):
-    _id: str  # Ensure this field is present
+# Pydantic model for Item
+class Item(BaseModel):
     name: str
     email: str
     item_name: str
     quantity: int
     expiry_date: datetime
-    insert_date: datetime = None  # Optional field
+    insert_date: Optional[datetime] = None  # Auto-set on insert
+    id: Optional[str] = None  # MongoDB _id field as string
 
-class Config:
-        json_encoders = {
-            ObjectId: str
-        }
+    class Config:
+        # Allows Pydantic to serialize ObjectId as a string
+        json_encoders = {ObjectId: str}
 
-def insert_item(item_data: dict):
+# Insert item into the database
+def insert_item(item_data: dict) -> dict:
     # Generate a new ObjectId for the item
     item_data['_id'] = ObjectId()
-    item_data['insert_date'] = datetime.utcnow()  # Use UTC for consistency
+    # Use UTC for consistency in dates
+    item_data['insert_date'] = datetime.utcnow()
 
     # Insert the item into the MongoDB collection
     item_collection.insert_one(item_data)
 
-    # Convert ObjectId to string before returning
-    item_data['_id'] = str(item_data['_id'])
+    # Convert ObjectId to string before returning the inserted item
+    item_data['id'] = str(item_data.pop('_id'))  # Move _id to id field
     print(f"Inserted Item: {item_data}")  # Debugging print
-    return item_data  # Return the inserted item with the new _id
+    return item_data  # Return the inserted item with the new id
 
-
-def find_item(item_id: str):
+# Find a single item by its ID
+def find_item(item_id: str) -> Optional[Item]:
     if not ObjectId.is_valid(item_id):
         return None
 
+    # Find the item by ObjectId
     item = item_collection.find_one({"_id": ObjectId(item_id)})
     if item:
-        item['_id'] = str(item.pop('_id'))  # Convert ObjectId to str
-        return item  # Return as a dictionary, not ItemModel
+        item['id'] = str(item.pop('_id'))  # Convert ObjectId to string and assign to 'id'
+        return Item(**item)  # Return as an Item Pydantic model
     return None
-   
 
-def find_all_items():
+# Find all items in the collection
+def find_all_items() -> List[Item]:
+    # Find all items in the MongoDB collection
     items = list(item_collection.find())
+    # Convert ObjectId to string for each item
     for item in items:
-        item['_id'] = str(item['_id'])  # Convert ObjectId to str
-    return [ItemModel(**item) for item in items]  # Return a list of ItemModel instances
+        item['id'] = str(item.pop('_id'))
+    # Return a list of Item instances
+    return [Item(**item) for item in items]
 
-def update_item(item_id: str, update_data: dict):
+# Update an item by its ID
+def update_item(item_id: str, update_data: dict) -> Optional[Item]:
     if not ObjectId.is_valid(item_id):
         return None
 
+    # Update the item in MongoDB
     result = item_collection.update_one({"_id": ObjectId(item_id)}, {"$set": update_data})
     if result.modified_count > 0:
         return find_item(item_id)  # Return the updated item
-    return None  # Item not found
+    return None  # Item not found or no update applied
 
-def delete_item(item_id: str):
+# Delete an item by its ID
+def delete_item(item_id: str) -> bool:
     if not ObjectId.is_valid(item_id):
         return False
 
+    # Delete the item from MongoDB
     result = item_collection.delete_one({"_id": ObjectId(item_id)})
-    return result.deleted_count > 0  # Return True if item was deleted
+    return result.deleted_count > 0  # Return True if the item was deleted
