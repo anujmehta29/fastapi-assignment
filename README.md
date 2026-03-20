@@ -1,99 +1,74 @@
-# anujpythonAssessment
+# FastAPI Backend System - Item & User Management
 
-# FastAPI Project for Vodex.ai Assignment
+A scalable backend REST API built using FastAPI and MongoDB Atlas to manage items and user clock-in records with support for filtering, aggregation, and real-time data operations.
 
-## Overview
-This project implements a FastAPI application that performs CRUD (Create, Read, Update, Delete) operations for two entities: **Items** and **User Clock-In Records**. The application uses MongoDB Atlas for data storage and provides a RESTful API to manage these entities.
+## 🚀 Features
+- Full CRUD operations for Items and User Clock-In Records  
+- Advanced filtering based on Email, Date, Quantity, and Location  
+- MongoDB aggregation for analytics (grouping and counting data)  
+- RESTful API design following best practices  
+- Automatic API documentation using Swagger (FastAPI)  
 
-## Table of Contents
-- [Features](#features)
-- [Requirements](#requirements)
-- [Setup](#setup)
-- [Running the Application](#running-the-application)
-- [API Endpoints](#api-endpoints)
-- [Testing the APIs](#testing-the-apis)
-- [Hosted Documentation](#hosted-documentation)
-- [Contributing](#contributing)
-- [License](#license)
+## 🛠 Tech Stack
+- Python  
+- FastAPI  
+- MongoDB Atlas  
+- Pydantic  
+- Uvicorn  
 
-## Features
-- CRUD operations for Items:
-  - Create, read, update, and delete items.
-  - Filter items based on various criteria (Email, Expiry Date, Insert Date, Quantity).
-  - MongoDB aggregation to count items grouped by email.
-- CRUD operations for User Clock-In Records:
-  - Create, read, update, and delete clock-in records.
-  - Filter clock-in records based on Email, Location, and Insert DateTime.
-- Automatic Swagger documentation generation for the API.
+## 📂 Project Structure
+- Routes → API endpoints  
+- Models → Data validation schemas  
+- Database → MongoDB connection and queries  
 
-## Requirements
-- Python 3.7 or higher
-- MongoDB Atlas account
-- Dependencies:
-  - FastAPI
-  - Uvicorn
-  - Pydantic
-  - pymongo
-  - python-dotenv (for environment variable management)
+## ⚙️ Setup Instructions
 
-## Setup
+### Clone the Repository
+git clone https://github.com/anujmehta29/fastapi-assignment.git  
+cd fastapi-assignment  
 
-### 1. Clone the Repository
-Clone this repository to your local machine:
-```bash
-git clone https://github.com/anujmehta29/fastapi-assignment.git
-cd fastapi-assignment
+### Create Virtual Environment
+python -m venv venv  
 
+### Activate Environment
+Windows:
+venv\Scripts\activate  
 
-### 2. Create a Virtual Environment
-    Create a virtual environment to manage dependencies:
-    python3 -m venv venv
-    Activate the virtual environment:
+Linux / Mac:
+source venv/bin/activate  
 
-    For Windows:
-    venv\Scripts\activate
+### Install Dependencies
+pip install -r requirements.txt  
 
-    For Linux/Mac:
-    source venv/bin/activate
+### Configure Environment Variables
+Create a `.env` file and add:
+MONGODB_URI=<your-mongodb-connection-string>  
 
+## ▶️ Run the Application
+uvicorn main:app --reload  
 
-3. Install Dependencies
-    Install the required dependencies using pip:
+## 📌 API Endpoints
 
-      pip install -r requirements.txt
-      If the requirements.txt file is not created yet, you can generate it using:
+### Items APIs
+- GET /api/items → Retrieve all items  
+- POST /api/items → Create a new item  
+- PUT /api/items/{id} → Update an item  
+- DELETE /api/items/{id} → Delete an item  
 
-      pip freeze > requirements.txt
+### User Clock-In APIs
+- GET /api/clockins → Retrieve all records  
+- POST /api/clockins → Create a record  
+- PUT /api/clockins/{id} → Update a record  
+- DELETE /api/clockins/{id} → Delete a record  
 
+## 📸 API Documentation
+Swagger UI available at:
+http://127.0.0.1:8000/docs  
 
-4. Set Up Environment Variables
-    Create a .env file in the project root directory to store your environment variables:
+## 🔧 Future Improvements
+- Add authentication (JWT-based security)  
+- Dockerize the application  
+- Deploy on cloud (AWS / GCP)  
 
-    MONGODB_URI=mongodb+srv://anuj2903:Itsanuj2903@fastapi-assignment.albn8.mongodb.net/FastAPI-Assignment?retryWrites=true&w=majority&appName=FastAPI-Assignment
-
-
-5. MongoDB Atlas Configuration
-    Ensure that your IP address is whitelisted in the MongoDB Atlas dashboard under the Network Access section. You can also allow access from anywhere by adding 0.0.0.0/0, but this is not recommended for production due to security risks.
-
-
-## Running the Application
-    Run the application using Uvicorn:
-    uvicorn main:app --reload
-    Replace main with the name of your main application file if different.
-
-
-
-API Endpoints
-    GET /api/items: Retrieve all items
-    POST /api/items: Create a new item
-    PUT /api/items/{item_id}: Update an existing item
-    DELETE /api/items/{item_id}: Delete an item
-
-Testing the APIs
-You can test the APIs using tools like Postman or through the automatically generated Swagger documentation available at http://127.0.0.1:8000/docs.
-
-Hosted Documentation
-Swagger UI is automatically available at /docs for API documentation.
-
-License:
-  No license specified.
+## 📎 Repository Link
+https://github.com/anujmehta29/fastapi-assignment
